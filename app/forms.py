@@ -3,6 +3,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from app.models import User
 from email_validator import validate_email, EmailNotValidError
+from flask_login import current_user
 
 class RegistrationForm(FlaskForm):
     username = StringField('Имя', validators=[DataRequired(), Length(min=2, max=20)])
@@ -37,3 +38,9 @@ class EditForm(FlaskForm):
     username = StringField('Новое имя', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Новая почта', validators=[DataRequired(), Email()])
     submit = SubmitField('Сохранить')
+
+    def validate_email(self, email):
+        # Найдём пользователя с таким email, но не текущего
+        user = User.query.filter_by(email=email.data).first()
+        if user and user.id != current_user.id:
+            raise ValidationError('Такая почта уже используется.')
