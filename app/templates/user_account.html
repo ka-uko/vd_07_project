@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Аккаунт{% endblock %}
+{% block content %}
+<h2>Ваши данные:</h2>
+<p>Имя: {{ user.username }}</p>
+<p>Почта: {{ user.email }}</p>
+<a href="{{ url_for('edit') }}">Редактировать данные</a>
+<form action="{{ url_for('logout') }}" method="GET">
+    <button type="submit">Выход</button>
+</form>
+{% endblock %}
