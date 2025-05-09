@@ -44,6 +44,9 @@ def edit():
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.email = form.email.data
+        if form.new_password.data:
+            hashed_password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+            current_user.password = hashed_password
         db.session.commit()
         flash('Данные обновлены', 'success')
         return redirect(url_for('account'))

@@ -5,6 +5,7 @@ from app.models import User
 from email_validator import validate_email, EmailNotValidError
 from flask_login import current_user
 
+
 class RegistrationForm(FlaskForm):
     username = StringField('Имя', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Почта', validators=[DataRequired(), Email()])
@@ -37,10 +38,12 @@ class LoginForm(FlaskForm):
 class EditForm(FlaskForm):
     username = StringField('Новое имя', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Новая почта', validators=[DataRequired(), Email()])
+    new_password = PasswordField('Новый пароль')  # опционально
+    confirm_password = PasswordField('Подтвердите пароль', validators=[EqualTo('new_password', message='Пароли не совпадают')])
     submit = SubmitField('Сохранить')
 
     def validate_email(self, email):
-        # Найдём пользователя с таким email, но не текущего
+        from flask_login import current_user
         user = User.query.filter_by(email=email.data).first()
         if user and user.id != current_user.id:
             raise ValidationError('Такая почта уже используется.')
